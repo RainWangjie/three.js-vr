@@ -4,8 +4,16 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node index.js"
+  },
+  "dependencies": {
+    "opn": "^5.1.0"
+  },
+  "devDependencies": {
+    "koa": "^2.3.0",
+    "koa-static": "^4.0.1",
+    "qrcode-terminal": "^0.11.0"
   },
   "author": "Mr.Rain🌹",
   "license": "ISC"
