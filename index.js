@@ -2,38 +2,38 @@
  * Created by gewangjie on 2017/10/9
  */
 const Koa = require('koa');
+const os = require('os');
 const app = new Koa();
 const fs = require('fs');
 
 const path = require('path');
 const serve = require('koa-static');
 const opn = require('opn');
-const server = require('http').createServer(app);
 const QRCode = require("qrcode-terminal");
 
-var localhost = '',
+let localhost = '',
     port = process.env.PORT || 3000;
 
 try {
-    var network = os.networkInterfaces();
+    let network = os.networkInterfaces();
     localhost = network['en0'][1].address
 } catch (e) {
     localhost = 'localhost';
 }
 
 // Terminal内绘制二维码
-var url = 'http://' + localhost + ':' + port;
+let url = 'http://' + localhost + ':' + port;
 QRCode.setErrorLevel('Q');
 QRCode.generate(url);
 
 console.log(__dirname);
 
-const static_res = serve(path.join(__dirname + '/resources/'));
+const static_res = serve(path.join(__dirname + '/app/'));
 app.use(static_res);
 
 const main = ctx => {
     ctx.response.type = 'html';
-    ctx.response.body = fs.createReadStream('./resources/index.html');
+    ctx.response.body = fs.createReadStream('./app/three-vr.html');
 };
 app.use(main);
 
