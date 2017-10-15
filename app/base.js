@@ -2,7 +2,7 @@
  * Created by gewangjie on 2017/10/14
  */
 
-function VRControls(camera_left, scene_left, camera_right, scene_right, render, radius) {
+function VRControls(scene, camera_left, camera_right, render, radius) {
     if (window.DeviceOrientationEvent) {
         window.addEventListener("deviceorientation", function (event) {
             device.beta = Math.round(event.beta, 2);
@@ -13,13 +13,11 @@ function VRControls(camera_left, scene_left, camera_right, scene_right, render, 
             } else {
                 device.alpha = Math.round(event.alpha, 2);
             }
-            //document.getElementById("alpha").innerHTML = device.alpha;
-            //document.getElementById("beta").innerHTML = device.beta;
-            //document.getElementById("gamma").innerHTML = device.gamma;
         }, false);
     } else {
         alert('您的设备不支持');
     }
+
     var device = {
         radius: radius,
         alpha: 0,
@@ -44,8 +42,8 @@ function VRControls(camera_left, scene_left, camera_right, scene_right, render, 
         camera_left.position.set(device.left_x, device.left_y, device.left_z);
         camera_right.position.set(device.right_x, device.right_y, device.right_z);
 
-        camera_left.lookAt(scene_left.position);
-        camera_right.lookAt(scene_right.position);
+        camera_left.lookAt(scene.position);
+        camera_right.lookAt(scene.position);
 
         render();
 
@@ -88,42 +86,47 @@ function VRControls(camera_left, scene_left, camera_right, scene_right, render, 
         device.right_y = Math.round(device.right_y, 2);
         device.right_z = Math.round(device.right_z, 2);
     }
+}
 
-    // var dolly = true;
-    // var tapTime1, tapTime2;
-    // document.body.addEventListener('touchstart', function () {
-    //     tapTime1 = setTimeout(function () {
-    //         dolly = false;
-    //         timed();
-    //     }, 300);
-    //
-    //     function timed() {
-    //         //console.log('缩小');
-    //         console.log('alpha:' + device.alpha + ';beta:' + device.beta + ';gamma' + device.gamma);
-    //         console.log('(' + device.left_x + ',' + device.left_y + ',' + device.left_z + ')');
-    //         device.zoom *= 0.98;
-    //         camera_left.zoom = device.zoom;
-    //         camera_left.updateProjectionMatrix();
-    //         camera_right.zoom = device.zoom;
-    //         camera_right.updateProjectionMatrix();
-    //         tapTime2 = setTimeout(timed, 500);
-    //     }
-    // });
-    // document.body.addEventListener('touchend', function () {
-    //     clearTimeout(tapTime1);
-    //     clearTimeout(tapTime2);
-    //     if (dolly) {
-    //         device.zoom *= 1.01;
-    //         camera_left.zoom = device.zoom;
-    //         camera_left.updateProjectionMatrix();
-    //         camera_right.zoom = device.zoom;
-    //         camera_right.updateProjectionMatrix();
-    //         console.log('放大');
-    //     } else {
-    //         console.log('缩小结束')
-    //     }
-    //     console.log('zoom:' + device.zoom)
-    //     dolly = true;
-    // })
+//判断是否全屏
+function fullscreen() {
+    return document.fullscreen ||
+        document.webkitIsFullScreen ||
+        document.mozFullScreen ||
+        false;
+}
 
+//全屏
+function requestFullscreen(elem) {
+    console.log('触发全屏');
+    if (elem.requestFullscreen) {
+        elem.requestFullscreen();
+    }
+    else if (elem.webkitRequestFullScreen) {
+        // 对 Chrome 特殊处理，
+        // 参数 Element.ALLOW_KEYBOARD_INPUT 使全屏状态中可以键盘输入。
+        if (window.navigator.userAgent.toUpperCase().indexOf('CHROME') >= 0) {
+            elem.webkitRequestFullScreen(Element.ALLOW_KEYBOARD_INPUT);
+        }
+        // Safari 浏览器中，如果方法内有参数，则 Fullscreen 功能不可用。
+        else {
+            elem.webkitRequestFullScreen();
+        }
+    }
+    else if (elem.mozRequestFullScreen) {
+        elem.mozRequestFullScreen();
+    }
+}
+
+//退出全屏
+function exitFullscreen() {
+    if (document.exitFullscreen) {
+        document.exitFullscreen();
+    }
+    else if (document.webkitCancelFullScreen) {
+        document.webkitCancelFullScreen();
+    }
+    else if (document.mozCancelFullScreen) {
+        document.mozCancelFullScreen();
+    }
 }

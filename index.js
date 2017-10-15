@@ -33,7 +33,7 @@ app.use(static_res);
 
 const main = ctx => {
     ctx.response.type = 'html';
-    ctx.response.body = fs.createReadStream('./app/three-vr.html');
+    ctx.response.body = fs.createReadStream('./app/nav.html');
 };
 app.use(main);
 

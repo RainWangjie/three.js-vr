@@ -1,24 +1,30 @@
 /**
  * Created by gewangjie on 2017/10/12
  */
+const windowW = window.innerWidth;
+const windowH = window.innerHeight;
+const wrapperEl = document.getElementsByClassName('model-show')[0];
+const leftEl = document.getElementById('left');
+const rightEl = document.getElementById('right');
 
-var scene = new THREE.Scene();
-var camera_left = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight / 2, .1, 1000);
+// 初始场景和左右摄像机
+var scene = new THREE.Scene(),
+    camera_left = new THREE.PerspectiveCamera(45, windowW / windowH / 2, .1, 1000),
+    camera_right = camera_left.clone();
 
-var camera_right = camera_left.clone();
+var renderer_left = new THREE.WebGLRenderer({antialiasing: true, alpha: true});
+// renderer_left.setClearColor(new THREE.Color(0x000000, 1.0));
+renderer_left.setSize(windowW / 2, windowH);
+// renderer_left.shadowMapEnabled = true;
+leftEl.appendChild(renderer_left.domElement);
 
-var renderer_left = new THREE.WebGLRenderer();
-renderer_left.setClearColor(new THREE.Color(0x000000, 1.0));
-renderer_left.setSize(window.innerWidth / 2, window.innerHeight);
-renderer_left.shadowMapEnabled = true;
-document.getElementById('left').appendChild(renderer_left.domElement);
+var renderer_right = new THREE.WebGLRenderer({antialiasing: true, alpha: true});
+// renderer_right.setClearColor(new THREE.Color(0x000000, 1.0));
+renderer_right.setSize(windowW / 2, windowH);
+// renderer_right.shadowMapEnabled = true;
+rightEl.appendChild(renderer_right.domElement);
 
-var renderer_right = new THREE.WebGLRenderer();
-renderer_right.setClearColor(new THREE.Color(0x000000, 1.0));
-renderer_right.setSize(window.innerWidth / 2, window.innerHeight);
-renderer_right.shadowMapEnabled = true;
-document.getElementById('right').appendChild(renderer_right.domElement);
-
+// 初始化立方体，并加入场景
 var cubeMaterialArray = [];
 cubeMaterialArray.push(new THREE.MeshBasicMaterial({color: 0xff3333}));
 cubeMaterialArray.push(new THREE.MeshBasicMaterial({color: 0xff8833}));
@@ -32,6 +38,7 @@ var cube = new THREE.Mesh(cubeGeometry, cubeMaterials);
 cube.position.set(0, 0, 0);
 scene.add(cube);
 
+// 设置灯光
 var light = new THREE.PointLight(0xffffff);
 light.position.set(-100, 200, -100);
 scene.add(light);
@@ -39,6 +46,7 @@ scene.add(light);
 var directionalLight = new THREE.DirectionalLight(0xffeedd);
 directionalLight.position.set(0, 0, 1).normalize();
 scene.add(directionalLight);
+
 //3个聚光灯
 var spotLight_1 = new THREE.SpotLight(0xffffff);
 spotLight_1.position.set(-353, -353, 500);
@@ -53,12 +61,16 @@ spotLight_3.position.set(483, -130, 300);
 spotLight_3.castShadow = true;
 scene.add(spotLight_3);
 
+// 坐标系
 var axes = new THREE.AxisHelper(100);
 scene.add(axes);
 
-VRControls(camera_left, scene, camera_right, scene, render, 200);
+VRControls(scene, camera_left, camera_right, render, 100);
 
 function render() {
     renderer_left.render(scene, camera_left);
     renderer_right.render(scene, camera_right);
 }
+
+// 开启全屏
+fullscreen() && requestFullscreen(wrapperEl);
